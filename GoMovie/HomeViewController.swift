@@ -26,16 +26,29 @@ class HomeViewController: UIViewController {
     
     //MARK: - Private
     private func fetchGenres() {
-        var cellViewModel: [MovieGenreTableViewCellViewModel] = []
-        for item in 0...5 {
-            let viewModel: MovieGenreTableViewCellViewModel = MovieGenreTableViewCellViewModel(id: 1,
-                                                                                               movieGenre: "Dummy Movie Genre")
-            cellViewModel.append(viewModel)
+        let urlString: String = "https://api.themoviedb.org/3/genre/movie/list?api_key=0561fb61ccd13b5dea762e58b20f90e3&language=en-US"
+        if let url: URL = URL(string: urlString) {
+            if let data: Data = try? Data(contentsOf: url) {
+                parse(json: data)
+            }
         }
-        self.cellViewModel.append(contentsOf: cellViewModel)
+    }
+    
+    private func parse(json: Data) {
+        let decoder = JSONDecoder()
         
-        if self.cellViewModel.count > 0 {
-            tableView.reloadData()
+        if let jsonData = try? decoder.decode(MovieGenresResponse.self, from: json) {
+            var cellViewModel: [MovieGenreTableViewCellViewModel] = []
+            for item in jsonData.genres {
+                let viewModel: MovieGenreTableViewCellViewModel = MovieGenreTableViewCellViewModel(id: item.id,
+                                                                                                   movieGenre: item.name)
+                cellViewModel.append(viewModel)
+            }
+            self.cellViewModel.append(contentsOf: cellViewModel)
+            
+            if self.cellViewModel.count > 0 {
+                tableView.reloadData()
+            }
         }
     }
 }
