@@ -11,7 +11,19 @@ class MovieListViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     
     private var cellViewModel: [MovieListTableViewCellViewModel] = []
+    
+    private var movieId: Int
 
+    //MARK: - Lifecycle
+    required init(movieId: Int) {
+        self.movieId = movieId
+        super.init(nibName: "MovieListViewController", bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
@@ -26,15 +38,28 @@ class MovieListViewController: UIViewController {
 
     //MARK: - Private
     private func fetchMovieList() {
-        var cellViewModel: [MovieListTableViewCellViewModel] = []
-        for item in 0...5 {
-            let viewModel: MovieListTableViewCellViewModel = MovieListTableViewCellViewModel(movieName: "Movie Name")
-            cellViewModel.append(viewModel)
+        let urlString: String = "https://api.themoviedb.org/3/movie/\(movieId)/lists?api_key=0561fb61ccd13b5dea762e58b20f90e3&language=en-US&page=1"
+        if let url: URL = URL(string: urlString) {
+            if let data: Data = try? Data(contentsOf: url) {
+                parse(json: data)
+            }
         }
-        self.cellViewModel.append(contentsOf: cellViewModel)
+    }
+    
+    private func parse(json: Data) {
+        let decoder = JSONDecoder()
         
-        if self.cellViewModel.count > 0 {
-            tableView.reloadData()
+        if let jsonData = try? decoder.decode(MovieListResponse.self, from: json) {
+            var cellViewModel: [MovieListTableViewCellViewModel] = []
+            for item in jsonData.results {
+                let viewModel: MovieListTableViewCellViewModel = MovieListTableViewCellViewModel(movieName: item.name)
+                cellViewModel.append(viewModel)
+            }
+            self.cellViewModel.append(contentsOf: cellViewModel)
+            
+            if self.cellViewModel.count > 0 {
+                tableView.reloadData()
+            }
         }
     }
 }

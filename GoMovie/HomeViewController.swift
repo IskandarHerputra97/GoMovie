@@ -11,6 +11,7 @@ class HomeViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     
     private var cellViewModel: [MovieGenreTableViewCellViewModel] = []
+    private var allMovieGenreData: [Genres] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,6 +41,7 @@ class HomeViewController: UIViewController {
         if let jsonData = try? decoder.decode(MovieGenresResponse.self, from: json) {
             var cellViewModel: [MovieGenreTableViewCellViewModel] = []
             for item in jsonData.genres {
+                allMovieGenreData.append(contentsOf: jsonData.genres)
                 let viewModel: MovieGenreTableViewCellViewModel = MovieGenreTableViewCellViewModel(id: item.id,
                                                                                                    movieGenre: item.name)
                 cellViewModel.append(viewModel)
@@ -70,7 +72,8 @@ extension HomeViewController: UITableViewDataSource {
 
 extension HomeViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let movieListVC: MovieListViewController = MovieListViewController()
+        let movieId: Int = allMovieGenreData[indexPath.row].id
+        let movieListVC: MovieListViewController = MovieListViewController(movieId: movieId)
         navigationController?.pushViewController(movieListVC, animated: true)
     }
 }
