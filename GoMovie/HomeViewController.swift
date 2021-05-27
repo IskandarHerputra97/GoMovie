@@ -28,7 +28,8 @@ class HomeViewController: UIViewController {
     private func fetchGenres() {
         var cellViewModel: [MovieGenreTableViewCellViewModel] = []
         for item in 0...5 {
-            let viewModel: MovieGenreTableViewCellViewModel = MovieGenreTableViewCellViewModel(movieGenre: "Dummy Movie Genre")
+            let viewModel: MovieGenreTableViewCellViewModel = MovieGenreTableViewCellViewModel(id: 1,
+                                                                                               movieGenre: "Dummy Movie Genre")
             cellViewModel.append(viewModel)
         }
         self.cellViewModel.append(contentsOf: cellViewModel)

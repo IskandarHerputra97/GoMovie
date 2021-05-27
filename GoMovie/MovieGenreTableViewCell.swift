@@ -8,9 +8,14 @@
 import UIKit
 
 final class MovieGenreTableViewCellViewModel {
+    private(set) var id: Int = 0
     private(set) var movieGenre: String = ""
     
-    init(movieGenre: String?) {
+    init(id: Int?,
+         movieGenre: String?) {
+        if let id: Int = id {
+            self.id = id
+        }
         if let movieGenre: String = movieGenre {
             self.movieGenre = movieGenre
         }
