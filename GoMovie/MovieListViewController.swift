@@ -11,6 +11,7 @@ class MovieListViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     
     private var cellViewModel: [MovieListTableViewCellViewModel] = []
+    private var allMovieData: [Results] = []
     
     private var movieId: Int
 
@@ -52,6 +53,7 @@ class MovieListViewController: UIViewController {
         if let jsonData = try? decoder.decode(MovieListResponse.self, from: json) {
             var cellViewModel: [MovieListTableViewCellViewModel] = []
             for item in jsonData.results {
+                allMovieData.append(contentsOf: jsonData.results)
                 let viewModel: MovieListTableViewCellViewModel = MovieListTableViewCellViewModel(movieName: item.name)
                 cellViewModel.append(viewModel)
             }
@@ -81,5 +83,9 @@ extension MovieListViewController: UITableViewDataSource {
 }
 
 extension MovieListViewController: UITableViewDelegate {
-    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let movieId: Int = allMovieData[indexPath.row].id
+        let movieDetailVC: MovieDetailViewController = MovieDetailViewController(movieId: movieId)
+        navigationController?.pushViewController(movieDetailVC, animated: true)
+    }
 }

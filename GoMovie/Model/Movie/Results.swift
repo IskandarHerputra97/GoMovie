@@ -8,5 +8,6 @@
 import Foundation
 
 struct Results: Codable {
+    let id: Int
     let name: String
 }
